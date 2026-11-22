@@ -1,235 +1,180 @@
-import { useEffect, useRef } from "react";
-import { motion, useInView, useMotionValue, useSpring } from "motion/react";
-import { Briefcase, Code2, GraduationCap, MapPin, Rocket, Smartphone, Server, Palette, Zap } from "lucide-react";
-import { SiReact, SiNextdotjs, SiTypescript, SiNodedotjs, SiMongodb, SiDocker, SiFigma, SiSocketdotio } from "react-icons/si";
-import { FaAws } from "react-icons/fa6";
+import { ArrowUpRight, CheckCircle2, Code2, Cpu, GraduationCap, Layers, MapPin, Rocket, Server, Smartphone } from "lucide-react";
 
-/* ---------- config (edit these) ---------- */
-const STATS = [
-  { value: 1, suffix: "+", label: "Year in production" }, // TODO
-  { value: 6, suffix: "+", label: "Projects shipped" }, // TODO
-  { value: 15, suffix: "+", label: "ERP modules built" }, // TODO
-];
-
-const STACK_ICONS = [
-  { icon: SiReact, color: "#61dafb" },
-  { icon: SiNextdotjs, color: "#ffffff" },
-  { icon: SiTypescript, color: "#3178c6" },
-  { icon: SiNodedotjs, color: "#5fa04e" },
-  { icon: SiMongodb, color: "#47a248" },
-  { icon: SiDocker, color: "#2496ed" },
-  { icon: FaAws, color: "#ff9900" },
-  { icon: SiSocketdotio, color: "#e5e7eb" },
-  { icon: SiFigma, color: "#f24e1e" },
-];
-
-const FOCUS = [
+const CORE_DISCIPLINES = [
   {
+    num: "01",
+    title: "Full-Stack Web Systems",
+    desc: "Architecting modular MERN applications, Next.js web applications, and robust RESTful APIs with strict validation.",
     icon: Code2,
-    title: "Full-stack web",
-    text: "MERN apps, REST APIs and dashboards.",
-    color: "text-brand",
+    color: "text-indigo-400",
+    hoverBorder: "hover:border-indigo-400/40",
+    bg: "bg-indigo-500/10",
   },
   {
+    num: "02",
+    title: "Mobile App Development",
+    desc: "Engineering performant, fluid cross-platform mobile apps using React Native for iOS and Android.",
     icon: Smartphone,
-    title: "Mobile",
-    text: "Cross-platform apps in React Native.",
-    color: "text-hot",
+    color: "text-sky-400",
+    hoverBorder: "hover:border-sky-400/40",
+    bg: "bg-sky-500/10",
   },
   {
+    num: "03",
+    title: "Backend & Data Engineering",
+    desc: "Designing scalable MongoDB schemas, PostgreSQL relational tables, JWT authentication flows, and Redis caching layers.",
     icon: Server,
-    title: "Backend & DevOps",
-    text: "Auth, real-time and Docker deployments.",
-    color: "text-aqua",
+    color: "text-emerald-400",
+    hoverBorder: "hover:border-emerald-400/40",
+    bg: "bg-emerald-500/10",
   },
   {
-    icon: Palette,
-    title: "UI craft",
-    text: "From Figma to pixel-perfect React.",
+    num: "04",
+    title: "Design System & Interface Craft",
+    desc: "Transforming design prototypes into accessible, responsive, and pixel-precise React components.",
+    icon: Layers,
     color: "text-amber-400",
+    hoverBorder: "hover:border-amber-400/40",
+    bg: "bg-amber-500/10",
   },
 ];
 
-/* ---------- helpers ---------- */
-function Counter({ to, suffix = "" }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-  const mv = useMotionValue(0);
-  const spring = useSpring(mv, { stiffness: 70, damping: 20 });
+const MILESTONES = [
+  {
+    year: "2022 — 2025",
+    degree: "Bachelor of Computer Application (BCA)",
+    institution: "Moulana College of Arts, Science & Commerce, Chennara",
+    desc: "Formal computer science foundation covering algorithms, data structures, database management systems, and software engineering principles.",
+  },
+  {
+    year: "2020 — 2022",
+    degree: "Higher Secondary — Computer Commerce",
+    institution: "GHSS Tirurangadi",
+    desc: "Early immersion into computation, structured logic, and business commerce foundations.",
+  },
+];
 
-  useEffect(() => {
-    if (inView) mv.set(to);
-  }, [inView, to, mv]);
-
-  useEffect(
-    () =>
-      spring.on("change", (v) => {
-        if (ref.current) ref.current.textContent = Math.round(v) + suffix;
-      }),
-    [spring, suffix],
-  );
-
-  return <span ref={ref}>0{suffix}</span>;
-}
-
-// spotlight card that follows the cursor
-function Card({ children, className = "", delay = 0 }) {
-  const onMove = (e) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty("--cx", `${e.clientX - r.left}px`);
-    e.currentTarget.style.setProperty("--cy", `${e.clientY - r.top}px`);
-  };
-
-  return (
-    <motion.div
-      onMouseMove={onMove}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
-      className={`group glass relative overflow-hidden rounded-3xl p-6 transition-colors hover:border-white/20 ${className}`}
-    >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{
-          background: "radial-gradient(350px circle at var(--cx) var(--cy), rgba(99,102,241,0.14), transparent 60%)",
-        }}
-      />
-      <div className="relative h-full">{children}</div>
-    </motion.div>
-  );
-}
-
-/* ---------- About ---------- */
 export default function About() {
   return (
-    <section id="about" className="relative py-28">
-      <div className="pointer-events-none absolute left-0 top-1/3 -z-10 h-80 w-80 rounded-full bg-brand/15 blur-[120px]" />
-
+    <section id="about" className="relative py-24 sm:py-32">
+      {/* Hairline boundary */}
       <div className="mx-auto max-w-6xl px-6 lg:px-10">
-        {/* heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="mb-14 max-w-2xl"
-        >
-          <p className="mb-3 font-mono text-sm uppercase tracking-[0.25em] text-brand">// about me</p>
-          <h2 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
-            Turning ideas into <span className="text-gradient">products that ship</span>
-          </h2>
-        </motion.div>
+        {/* Section Heading */}
+        <div className="flex flex-col items-start justify-between gap-4 border-b border-indigo-500/15 pb-6 sm:flex-row sm:items-end">
+          <div>
+            <span className="font-mono text-xs uppercase tracking-[0.25em] text-indigo-400 font-semibold">
+              01 // Profile & Foundations
+            </span>
+            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+              Engineering with purpose, shipping with precision.
+            </h2>
+          </div>
+          <p className="max-w-xs font-mono text-xs text-indigo-300/70">
+            BASED IN KERALA, INDIA · WORKING GLOBALLY
+          </p>
+        </div>
 
-        {/* bento grid */}
-        <div className="grid auto-rows-[minmax(180px,auto)] gap-4 md:grid-cols-6">
-          {/* bio */}
-          <Card className="md:col-span-4 md:row-span-2" delay={0}>
-            <div className="flex h-full flex-col justify-between gap-8">
-              <div>
-                <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand">
-                  <Zap size={13} /> Who I am
-                </span>
-                <p className="text-xl leading-relaxed text-zinc-300 sm:text-2xl">
-                  I'm a <span className="font-semibold text-white">full-stack developer</span> at{" "}
-                  <span className="font-semibold text-white">Zihnisoft Technology</span>, building a SaaS ERP product used by real businesses. I also
-                  ship client websites and my own products, working across <span className="text-gradient font-semibold">MERN</span>,{" "}
-                  <span className="text-gradient font-semibold">Next.js</span> and <span className="text-gradient font-semibold">React Native</span>.
-                </p>
-                <p className="mt-5 text-zinc-400">
-                  I started learning development less than two years ago, mostly by building and debugging real projects. I care about clean code,
-                  fast interfaces and finishing what I start.
-                </p>
-              </div>
+        {/* Narrative & Capabilities Grid */}
+        <div className="mt-12 grid gap-12 lg:grid-cols-12 lg:gap-16">
+          {/* Left Column: Personal Narrative & Philosophy (7 cols) */}
+          <div className="space-y-8 lg:col-span-7">
+            <div className="rounded-2xl border border-indigo-500/20 bg-gradient-to-b from-indigo-950/20 via-[#0d1322] to-[#090d16] p-6 shadow-xl sm:p-8">
+              <span className="font-mono text-xs text-amber-400 uppercase tracking-wider font-semibold">
+                The Trajectory
+              </span>
+              <p className="mt-4 font-display text-xl font-normal leading-relaxed text-zinc-100 sm:text-2xl">
+                I am a full-stack developer at <strong className="text-white font-semibold underline decoration-indigo-400 underline-offset-4">Zihnisoft Technology</strong>, where I develop enterprise SaaS modules used in daily commercial operations.
+              </p>
+              <p className="mt-4 text-base leading-relaxed text-zinc-300">
+                My approach to software engineering centers around practical problem-solving. Over the past two years, I have immersed myself in building and shipping production applications—from sales analytics dashboards and CRM Kanban engines to customer onboarding workflows and custom client platforms.
+              </p>
+              <p className="mt-4 text-base leading-relaxed text-zinc-400">
+                I believe that good software must be two things at once: structurally rigorous under the hood, and remarkably effortless for the person using it.
+              </p>
 
-              <div className="flex flex-wrap gap-3">
-                <span className="glass inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm text-zinc-300">
-                  <MapPin size={14} className="text-hot" /> Kerala, India
-                </span>
-                <span className="glass inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm text-zinc-300">
-                  <Briefcase size={14} className="text-aqua" /> Open to opportunities
-                </span>
+              {/* Quick Metadata Tags with Tinted Borders */}
+              <div className="mt-8 flex flex-wrap gap-2.5 pt-6 border-t border-indigo-500/15">
+                <span className="badge-arch border-indigo-500/30 bg-indigo-500/10 text-indigo-200">MERN Stack</span>
+                <span className="badge-arch border-sky-500/30 bg-sky-500/10 text-sky-200">React Native</span>
+                <span className="badge-arch border-indigo-500/30 bg-indigo-500/10 text-indigo-200">Next.js & TypeScript</span>
+                <span className="badge-arch border-emerald-500/30 bg-emerald-500/10 text-emerald-200">MongoDB & PostgreSQL</span>
+                <span className="badge-arch border-amber-500/30 bg-amber-500/10 text-amber-200">REST API Architecture</span>
               </div>
             </div>
-          </Card>
 
-          {/* stats */}
-          {STATS.slice(0, 2).map((s, i) => (
-            <Card key={s.label} className="md:col-span-1 md:row-span-1" delay={0.1 + i * 0.08}>
-              <div className="flex h-full flex-col justify-center">
-                <p className="text-gradient text-5xl font-extrabold">
-                  <Counter to={s.value} suffix={s.suffix} />
-                </p>
-                <p className="mt-2 text-sm text-zinc-400">{s.label}</p>
-              </div>
-            </Card>
-          ))}
-
-          {/* stack icons */}
-          <Card className="md:col-span-2 md:row-span-1" delay={0.26}>
-            <p className="mb-4 text-sm font-semibold text-zinc-400">Daily toolkit</p>
-            <div className="grid grid-cols-5 gap-3">
-              {STACK_ICONS.map(({ icon: Icon, color }, i) => (
-                <motion.div key={i} whileHover={{ y: -6, scale: 1.15 }} className="grid aspect-square place-items-center rounded-xl bg-white/[0.04]">
-                  <Icon size={22} style={{ color }} />
-                </motion.div>
-              ))}
-            </div>
-          </Card>
-
-          {/* focus areas */}
-          <Card className="md:col-span-3" delay={0.1}>
-            <p className="mb-5 text-sm font-semibold text-zinc-400">What I work on</p>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {FOCUS.map(({ icon: Icon, title, text, color }) => (
-                <div key={title} className="flex gap-3">
-                  <div className={`mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/[0.05] ${color}`}>
-                    <Icon size={18} />
+            {/* Disciplines Grid */}
+            <div>
+              <h3 className="font-mono text-xs uppercase tracking-wider text-indigo-300/80 mb-4 font-semibold">
+                Core Engineering Disciplines
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {CORE_DISCIPLINES.map(({ num, title, desc, icon: Icon, color, hoverBorder, bg }) => (
+                  <div
+                    key={title}
+                    className={`group rounded-xl border border-indigo-500/15 bg-[#0d1222]/60 p-5 transition-all ${hoverBorder} hover:bg-[#11172a] shadow-sm`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className={`font-mono text-xs ${color} font-semibold`}>{num}</span>
+                      <div className={`grid h-7 w-7 place-items-center rounded-lg ${bg}`}>
+                        <Icon size={15} className={color} />
+                      </div>
+                    </div>
+                    <h4 className="mt-3 font-display text-base font-semibold text-white">{title}</h4>
+                    <p className="mt-1.5 text-xs leading-relaxed text-zinc-400">{desc}</p>
                   </div>
-                  <div>
-                    <p className="font-semibold leading-tight">{title}</p>
-                    <p className="mt-1 text-sm text-zinc-400">{text}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Academic Pedigree & Production Focus (5 cols) */}
+          <div className="space-y-8 lg:col-span-5">
+            {/* Production Stats Card (Warm Radiant Gold & Amber) */}
+            <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-b from-amber-500/[0.08] via-[#14120a] to-[#0d0f17] p-6 shadow-xl sm:p-7">
+              <span className="font-mono text-xs uppercase tracking-wider text-amber-400 font-semibold">
+                Production Snapshot
+              </span>
+              <div className="mt-6 space-y-5">
+                <div className="flex items-baseline justify-between border-b border-amber-500/15 pb-3">
+                  <span className="text-sm text-zinc-300">Primary Role</span>
+                  <span className="font-mono text-xs font-semibold text-white">Full Stack Developer</span>
+                </div>
+                <div className="flex items-baseline justify-between border-b border-amber-500/15 pb-3">
+                  <span className="text-sm text-zinc-300">Current Affiliation</span>
+                  <span className="font-mono text-xs font-semibold text-indigo-300">Zihnisoft Technology</span>
+                </div>
+                <div className="flex items-baseline justify-between border-b border-amber-500/15 pb-3">
+                  <span className="text-sm text-zinc-300">Enterprise Product</span>
+                  <span className="font-mono text-xs font-semibold text-amber-400">Zihnisoft SaaS ERP</span>
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-sm text-zinc-300">Location Base</span>
+                  <span className="font-mono text-xs font-medium text-zinc-300">Kerala, India</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Academic Pedigree Ledger */}
+            <div className="rounded-2xl border border-indigo-500/15 bg-[#0c1120]/60 p-6 shadow-xl sm:p-7">
+              <div className="flex items-center gap-2 mb-6">
+                <GraduationCap size={16} className="text-indigo-400" />
+                <h3 className="font-mono text-xs uppercase tracking-wider text-indigo-300 font-semibold">
+                  Academic Ledger
+                </h3>
+              </div>
+
+              <div className="space-y-6">
+                {MILESTONES.map(({ year, degree, institution, desc }) => (
+                  <div key={degree} className="border-l-2 border-indigo-500/30 pl-4 transition-colors hover:border-amber-400">
+                    <span className="font-mono text-xs text-amber-400 font-semibold">{year}</span>
+                    <h4 className="mt-1 font-display text-sm font-semibold text-white">{degree}</h4>
+                    <p className="text-xs text-indigo-300/90 mt-0.5">{institution}</p>
+                    <p className="mt-2 text-xs leading-relaxed text-zinc-400">{desc}</p>
                   </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          {/* education */}
-          <Card className="md:col-span-3" delay={0.18}>
-            <div className="flex h-full flex-col justify-between gap-6">
-              <div className="flex items-start gap-4">
-                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand to-hot">
-                  <GraduationCap size={22} />
-                </div>
-                <div>
-                  <p className="text-sm text-zinc-500">2022 - 2025</p>
-                  <p className="text-lg font-semibold leading-snug">Bachelor of Computer Application</p>
-                  <p className="text-sm text-zinc-400">Moulana College of Arts, Science & Commerce, Chennara</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 border-t border-white/10 pt-5">
-                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/[0.05] text-aqua">
-                  <Rocket size={18} />
-                </div>
-                <p className="text-sm text-zinc-400">Now: building a SaaS ERP at Zihnisoft, plus client and personal projects.</p>
+                ))}
               </div>
             </div>
-          </Card>
-
-          {/* third stat, full width strip */}
-          <Card className="md:col-span-6" delay={0.1}>
-            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-              <div>
-                <p className="text-gradient text-5xl font-extrabold">
-                  <Counter to={STATS[2].value} suffix={STATS[2].suffix} />
-                </p>
-                <p className="mt-1 text-sm text-zinc-400">{STATS[2].label}</p>
-              </div>
-              <p className="max-w-xl text-zinc-400">CRM, Kanban boards, onboarding flows and more, built as modules of a multi-tenant SaaS ERP.</p>
-            </div>
-          </Card>
+          </div>
         </div>
       </div>
     </section>

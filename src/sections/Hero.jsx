@@ -1,333 +1,254 @@
-import { useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
-import { ArrowUpRight, Download, Mail, MapPin, Sparkles, ChevronDown, Terminal } from "lucide-react";
-import {
-  SiReact,
-  SiNodedotjs,
-  SiExpress,
-  SiMongodb,
-  SiTailwindcss,
-  SiJavascript,
-  SiPostgresql,
-  SiRedis,
-  SiGit,
-  SiPostman,
-  SiShopify,
-} from "react-icons/si";
+import { motion } from "motion/react";
+import { ArrowDown, ArrowUpRight, Layers, MapPin, Terminal } from "lucide-react";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import profile from "/image/IMG2.webp";
 
-/* ---------- data ---------- */
-const ROLES = ["MERN Stack apps", "React Native mobile apps", "ERP & CRM dashboards", "REST APIs that scale", "pixel-perfect interfaces"];
-
-const SOCIALS = [
-  { icon: FaGithub, href: "https://github.com/shibil-zihnisoft", label: "GitHub" },
-  { icon: FaLinkedinIn, href: "linkedin.com/in/shibil-k", label: "LinkedIn" },
-  { icon: Mail, href: "mailto:shibildevtech@gmail.com", label: "Email" },
+const CORE_CAPABILITIES = [
+  { label: "Frontend Systems", desc: "React · Next.js · TypeScript · Tailwind", color: "text-indigo-400", border: "border-indigo-500/30" },
+  { label: "Backend Engines", desc: "Node.js · Express · REST APIs · Auth", color: "text-emerald-400", border: "border-emerald-500/30" },
+  { label: "Data Architecture", desc: "MongoDB · PostgreSQL · Redis", color: "text-amber-400", border: "border-amber-500/30" },
+  { label: "Mobile Engineering", desc: "React Native (iOS & Android)", color: "text-sky-400", border: "border-sky-500/30" },
 ];
 
-const TECH = [
-  { icon: SiReact, name: "React", color: "#61dafb" },
-  { icon: SiNodedotjs, name: "Node.js", color: "#5fa04e" },
-  { icon: SiExpress, name: "Express", color: "#e5e7eb" },
-  { icon: SiMongodb, name: "MongoDB", color: "#47a248" },
-  { icon: SiJavascript, name: "JavaScript", color: "#f7df1e" },
-  { icon: SiTailwindcss, name: "Tailwind CSS", color: "#38bdf8" },
-  { icon: SiPostgresql, name: "PostgreSQL", color: "#4f8bc9" },
-  { icon: SiRedis, name: "Redis", color: "#ef4444" },
-  { icon: SiGit, name: "Git", color: "#f05133" },
-  { icon: SiPostman, name: "Postman", color: "#ff6c37" },
-  { icon: SiShopify, name: "Shopify", color: "#95bf47" },
-];
-
-const FLOATING = [
-  { icon: SiReact, color: "#61dafb", pos: "-left-6 top-10", delay: 0 },
-  { icon: SiNodedotjs, color: "#5fa04e", pos: "-right-4 top-24", delay: 0.8 },
-  { icon: SiMongodb, color: "#47a248", pos: "-left-2 bottom-24", delay: 1.6 },
-  { icon: SiTailwindcss, color: "#38bdf8", pos: "-right-6 bottom-10", delay: 2.4 },
-];
-
-/* ---------- typewriter hook ---------- */
-function useTypewriter(words, speed = 70, pause = 1500) {
-  const [index, setIndex] = useState(0);
-  const [text, setText] = useState("");
-  const [deleting, setDeleting] = useState(false);
-
-  useEffect(() => {
-    const word = words[index % words.length];
-    const full = text === word;
-    const delay = full && !deleting ? pause : deleting ? 35 : speed;
-
-    const t = setTimeout(() => {
-      if (full && !deleting) return setDeleting(true);
-      if (deleting) {
-        if (text.length === 0) {
-          setDeleting(false);
-          return setIndex((i) => i + 1);
-        }
-        return setText(word.slice(0, text.length - 1));
-      }
-      setText(word.slice(0, text.length + 1));
-    }, delay);
-
-    return () => clearTimeout(t);
-  }, [text, deleting, index, words, speed, pause]);
-
-  return text;
-}
-
-/* ---------- 3D tilt profile card ---------- */
-function ProfileCard() {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 150, damping: 15 });
-  const sy = useSpring(y, { stiffness: 150, damping: 15 });
-  const rotateX = useTransform(sy, [-0.5, 0.5], [12, -12]);
-  const rotateY = useTransform(sx, [-0.5, 0.5], [-12, 12]);
-
-  const onMove = (e) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    x.set((e.clientX - r.left) / r.width - 0.5);
-    y.set((e.clientY - r.top) / r.height - 0.5);
-  };
-  const onLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <div className="relative mx-auto w-[300px] sm:w-[360px]" style={{ perspective: 1000 }} onMouseMove={onMove} onMouseLeave={onLeave}>
-      {/* floating tech chips */}
-      {FLOATING.map(({ icon: Icon, color, pos, delay }, i) => (
-        <motion.div
-          key={i}
-          className={`glass absolute ${pos} z-20 grid h-14 w-14 place-items-center rounded-2xl shadow-xl`}
-          animate={{ y: [0, -14, 0] }}
-          transition={{ duration: 4, repeat: Infinity, delay, ease: "easeInOut" }}
-        >
-          <Icon size={26} style={{ color }} />
-        </motion.div>
-      ))}
-
-      <motion.div style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className="relative">
-        {/* spinning gradient ring */}
-        <div className="absolute -inset-[3px] overflow-hidden rounded-[2rem]">
-          <div className="absolute left-1/2 top-1/2 aspect-square w-[160%] -translate-x-1/2 -translate-y-1/2 animate-spin-slow bg-[conic-gradient(from_0deg,#6366f1,#ec4899,#22d3ee,#6366f1)]" />
-        </div>
-
-        <div className="relative overflow-hidden rounded-[2rem] bg-ink p-2">
-          <img src={profile} alt="Shibil" className="aspect-[4/5] w-full rounded-[1.6rem] object-cover" />
-          <div className="pointer-events-none absolute inset-2 rounded-[1.6rem] bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
-
-          {/* info strip */}
-          <div
-            className="glass absolute inset-x-5 bottom-5 flex items-center justify-between rounded-2xl px-4 py-3"
-            style={{ transform: "translateZ(40px)" }}
-          >
-            <div>
-              <p className="text-sm font-semibold leading-tight">Shibil</p>
-              <p className="text-xs text-zinc-400">Full Stack Developer</p>
-            </div>
-            <span className="flex items-center gap-1 text-xs text-zinc-300">
-              <MapPin size={12} className="text-hot" /> Kerala, IN
-            </span>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* mini code card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.7 }}
-        className="glass absolute -bottom-10 -left-10 z-30 hidden rounded-2xl px-4 py-3 font-mono text-[11px] leading-relaxed shadow-2xl md:block"
-      >
-        <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
-          <Terminal size={12} /> shibil.js
-        </div>
-        <p>
-          <span className="text-hot">const</span> <span className="text-aqua">dev</span> = {"{"}
-        </p>
-        <p className="pl-4">
-          stack: <span className="text-emerald-400">"MERN"</span>,
-        </p>
-        <p className="pl-4">
-          mobile: <span className="text-emerald-400">"React Native"</span>,
-        </p>
-        <p className="pl-4">
-          coffee: <span className="text-amber-400">Infinity</span>,
-        </p>
-        <p>{"}"}</p>
-      </motion.div>
-    </div>
-  );
-}
-
-/* ---------- animation presets ---------- */
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12, delayChildren: 0.2 } },
-};
-const item = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
-};
-
-/* ---------- Hero ---------- */
 export default function Hero() {
-  const typed = useTypewriter(ROLES);
-
-  // cursor spotlight
-  const onMouseMove = (e) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
-    e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
-  };
-
   return (
-    <section id="hero" onMouseMove={onMouseMove} className="relative isolate flex min-h-screen flex-col justify-center overflow-hidden pt-28 pb-10">
-      {/* ===== background ===== */}
-      <div className="absolute inset-0 -z-10">
-        {/* grid */}
+    <section
+      id="hero"
+      className="relative isolate min-h-screen pt-28 pb-16 sm:pt-36 sm:pb-24"
+    >
+      {/* Background Architectural Grid & Auras safely clipped without trapping touch scroll */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-grid-hairline opacity-75 [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_85%)]" />
+
+        {/* GPU-Safe Radial Glows: High-performance, zero memory leak on mobile Safari/Chrome */}
         <div
-          className="absolute inset-0 opacity-[0.07]"
+          className="absolute -top-40 right-1/4 h-[520px] w-[520px] rounded-full opacity-60"
           style={{
-            backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-            maskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
-            WebkitMaskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+            background: "radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 75%)",
           }}
         />
-        {/* blobs */}
-        <div className="absolute -left-32 top-0 h-[480px] w-[480px] animate-blob rounded-full bg-brand/30 blur-[120px]" />
         <div
-          className="absolute -right-24 top-1/3 h-[420px] w-[420px] animate-blob rounded-full bg-hot/20 blur-[120px]"
-          style={{ animationDelay: "-5s" }}
-        />
-        <div
-          className="absolute bottom-0 left-1/3 h-[360px] w-[360px] animate-blob rounded-full bg-aqua/15 blur-[120px]"
-          style={{ animationDelay: "-9s" }}
-        />
-        {/* cursor spotlight */}
-        <div
-          className="absolute inset-0"
+          className="absolute bottom-10 left-10 h-[450px] w-[450px] rounded-full opacity-50"
           style={{
-            background: "radial-gradient(500px circle at var(--mx, 50%) var(--my, 30%), rgba(99,102,241,0.12), transparent 60%)",
+            background: "radial-gradient(circle, rgba(245, 158, 11, 0.16) 0%, rgba(245, 158, 11, 0.04) 50%, transparent 75%)",
+          }}
+        />
+        <div
+          className="absolute top-1/2 left-1/3 h-[380px] w-[380px] rounded-full opacity-40"
+          style={{
+            background: "radial-gradient(circle, rgba(14, 165, 233, 0.14) 0%, transparent 70%)",
           }}
         />
       </div>
 
-      {/* ===== content ===== */}
-      <div className="mx-auto grid w-full max-w-7xl items-center gap-16 px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-10">
-        {/* left */}
-        <motion.div variants={container} initial="hidden" animate="show">
-          <motion.div variants={item} className="glass inline-flex items-center gap-2.5 rounded-full py-1.5 pl-3 pr-4 text-sm text-zinc-300">
+      <div className="mx-auto max-w-6xl px-6 lg:px-10">
+        {/* Top Status & Context Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-indigo-500/15 pb-5"
+        >
+          <div className="flex items-center gap-3">
             <span className="relative flex h-2.5 w-2.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
             </span>
-            Full Stack Developer @ <span className="font-semibold text-white">Zihnisoft Technology</span>
-          </motion.div>
+            <span className="font-mono text-xs tracking-wider text-emerald-300 font-medium">
+              AVAILABLE FOR SELECT PROJECTS & FULL-TIME ROLES
+            </span>
+          </div>
 
-          <motion.h1 variants={item} className="mt-7 text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-            Hi, I'm <span className="text-gradient">Shibil</span>
-            <br />
-            <span className="text-zinc-400">I build</span>
-          </motion.h1>
+          <div className="flex items-center gap-6 font-mono text-xs text-zinc-400">
+            <span className="flex items-center gap-1.5">
+              <MapPin size={12} className="text-amber-400" /> KERALA, INDIA
+            </span>
+            <span className="hidden sm:inline-block text-indigo-300/80">
+              ZIHNISOFT TECHNOLOGY // FULL STACK
+            </span>
+          </div>
+        </motion.div>
 
-          <motion.div variants={item} className="mt-2 flex min-h-[3.5rem] items-center text-3xl font-bold sm:text-4xl lg:text-5xl">
-            <span className="text-gradient">{typed}</span>
-            <span className="ml-1 inline-block h-[0.9em] w-[3px] animate-pulse bg-aqua" />
-          </motion.div>
-
-          <motion.p variants={item} className="mt-7 max-w-xl text-lg leading-relaxed text-zinc-400">
-            Full-stack developer specializing in the <span className="text-zinc-200">MERN stack</span> and{" "}
-            <span className="text-zinc-200">React Native</span>. I turn ideas into fast, scalable products, from clean APIs to interfaces people
-            actually enjoy using.
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div variants={item} className="mt-9 flex flex-wrap items-center gap-4">
-            <a
-              href="#projects"
-              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-brand to-hot px-7 py-3.5 font-semibold text-white shadow-[0_8px_30px_-6px_rgba(99,102,241,0.7)] transition hover:scale-[1.04]"
+        {/* Main Content Composition */}
+        <div className="grid items-center gap-12 lg:grid-cols-[1.25fr_0.85fr] lg:gap-16">
+          {/* Typographic Hero Statement */}
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
-              View my work
-              <ArrowUpRight size={18} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </a>
+              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3.5 py-1 text-xs font-mono text-indigo-300">
+                <span className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
+                SHIBIL // SOFTWARE ENGINEER
+              </div>
+              <h1 className="mt-4 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl lg:leading-[1.06]">
+                Architecting <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-sky-200 to-amber-200">scalable web & mobile</span> products.
+              </h1>
+            </motion.div>
 
-            {/* <a
-              href="/resume.pdf"
-              download
-              className="glass inline-flex items-center gap-2 rounded-full px-7 py-3.5 font-semibold transition hover:border-brand/60 hover:bg-white/[0.08]"
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-6 max-w-xl text-base leading-relaxed text-zinc-300 sm:text-lg"
             >
-              <Download size={18} /> Resume
-            </a> */}
+              Full Stack Developer at <span className="text-white font-semibold">Zihnisoft Technology</span> specializing in the{" "}
+              <span className="text-indigo-300 font-medium">MERN stack</span> and{" "}
+              <span className="text-sky-300 font-medium">React Native</span>. Building multi-tenant SaaS ERP platforms, high-throughput REST APIs, and bespoke digital experiences designed for production reliability.
+            </motion.p>
 
-            <div className="flex items-center gap-2 sm:ml-2">
-              {SOCIALS.map(({ icon: Icon, href, label }) => (
+            {/* CTAs & Social Connections */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-8 flex flex-wrap items-center gap-4"
+            >
+              <a
+                href="#projects"
+                className="group inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 border border-indigo-400/30 transition-all hover:bg-indigo-500 hover:shadow-indigo-500/40"
+              >
+                <span>Explore Case Studies</span>
+                <ArrowDown size={15} className="transition-transform group-hover:translate-y-0.5" />
+              </a>
+
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-950/40 px-6 py-3.5 text-sm font-medium text-indigo-100 transition hover:border-indigo-400/50 hover:bg-indigo-900/50 hover:text-white"
+              >
+                <span>Initiate Conversation</span>
+                <ArrowUpRight size={15} className="text-indigo-400" />
+              </a>
+
+              <div className="flex items-center gap-2 pl-2">
                 <a
-                  key={label}
-                  href={href}
+                  href="https://github.com/shiibiilll"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label={label}
-                  className="glass grid h-12 w-12 place-items-center rounded-full text-zinc-300 transition hover:-translate-y-1 hover:border-hot/60 hover:text-white"
+                  aria-label="GitHub Profile"
+                  className="grid h-11 w-11 place-items-center rounded-xl border border-indigo-500/20 bg-indigo-500/[0.05] text-zinc-400 transition hover:border-indigo-400 hover:bg-indigo-500/15 hover:text-white"
                 >
-                  <Icon size={18} />
+                  <FaGithub size={18} />
                 </a>
-              ))}
+                <a
+                  href="https://www.linkedin.com/in/shibil-k"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="LinkedIn Profile"
+                  className="grid h-11 w-11 place-items-center rounded-xl border border-indigo-500/20 bg-indigo-500/[0.05] text-zinc-400 transition hover:border-indigo-400 hover:bg-indigo-500/15 hover:text-white"
+                >
+                  <FaLinkedinIn size={16} />
+                </a>
+              </div>
+            </motion.div>
+
+            {/* Production Metrics Strip with Color Accents */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-12 grid grid-cols-3 gap-3 sm:gap-6 border-t border-indigo-500/15 pt-6"
+            >
+              <div className="border-l-2 border-indigo-500/50 pl-3 sm:pl-4">
+                <p className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">15+</p>
+                <p className="mt-1 font-mono text-[10px] sm:text-[11px] text-indigo-300/80 uppercase tracking-wider">ERP Modules Shipped</p>
+              </div>
+              <div className="border-l-2 border-amber-500/50 pl-3 sm:pl-4">
+                <p className="font-display text-xl font-bold tracking-tight text-amber-400 sm:text-2xl lg:text-3xl">06+</p>
+                <p className="mt-1 font-mono text-[10px] sm:text-[11px] text-zinc-400 uppercase tracking-wider">Production Systems</p>
+              </div>
+              <div className="border-l-2 border-emerald-500/50 pl-3 sm:pl-4">
+                <p className="font-display text-xl font-bold tracking-tight text-emerald-400 sm:text-2xl lg:text-3xl">100%</p>
+                <p className="mt-1 font-mono text-[10px] sm:text-[11px] text-zinc-400 uppercase tracking-wider">Full Stack & Mobile</p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Right Visual Plate: Art-Directed Editorial Portrait Frame */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-none"
+          >
+            {/* Ambient Aura behind the frame: GPU-safe radial gradient */}
+            <div
+              className="pointer-events-none absolute -inset-3 -z-10 rounded-3xl opacity-70"
+              style={{
+                background: "radial-gradient(ellipse at center, rgba(99, 102, 241, 0.25) 0%, rgba(14, 165, 233, 0.12) 40%, transparent 70%)",
+              }}
+            />
+
+            {/* Frame border with precision corner marks */}
+            <div className="relative rounded-2xl border border-indigo-500/30 bg-[#0c1222]/90 p-3 shadow-2xl sm:p-4">
+              {/* Corner crosshairs in radiant amber */}
+              <div className="absolute -top-1.5 -left-1.5 font-mono text-xs text-amber-400 select-none font-bold">+</div>
+              <div className="absolute -top-1.5 -right-1.5 font-mono text-xs text-amber-400 select-none font-bold">+</div>
+              <div className="absolute -bottom-1.5 -left-1.5 font-mono text-xs text-amber-400 select-none font-bold">+</div>
+              <div className="absolute -bottom-1.5 -right-1.5 font-mono text-xs text-amber-400 select-none font-bold">+</div>
+
+              {/* Image Container with subtle lighting */}
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-gradient-to-b from-indigo-950/40 to-zinc-950">
+                <img
+                  src={profile}
+                  alt="Shibil - Full Stack Developer"
+                  loading="eager"
+                  decoding="async"
+                  className="h-full w-full object-cover object-center filter contrast-[1.05] transition duration-700"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#090c15] via-[#090c15]/20 to-transparent opacity-85" />
+
+                {/* Bottom Overlay Info Tag */}
+                <div className="absolute inset-x-3 bottom-3 rounded-lg border border-indigo-500/30 bg-[#090d18]/95 p-3 backdrop-blur-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-display text-sm font-semibold text-white">Shibil</p>
+                      <p className="font-mono text-[11px] text-indigo-300">Full Stack Developer</p>
+                    </div>
+                    <div className="rounded border border-emerald-500/40 bg-emerald-500/15 px-2 py-0.5 font-mono text-[10px] text-emerald-400 font-medium">
+                      LIVE IN PRODUCTION
+                    </div>
+                  </div>
+                  <div className="mt-2 flex items-center gap-1.5 font-mono text-[10px] text-zinc-400">
+                    <Terminal size={11} className="text-amber-400" />
+                    <span>Zihnisoft Technology · ERP Engineering</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Micro spec badge floating adjacent */}
+            <div className="mt-4 flex items-center justify-between rounded-xl border border-indigo-500/20 bg-indigo-950/20 px-4 py-2.5 font-mono text-xs text-zinc-300">
+              <span className="flex items-center gap-2">
+                <Layers size={13} className="text-indigo-400" />
+                MERN · Next.js · React Native
+              </span>
+              <span className="text-indigo-400/80">ID: SHB-2026</span>
             </div>
           </motion.div>
+        </div>
 
-          <motion.div variants={item} className="mt-8 flex items-center gap-2 text-sm text-zinc-500">
-            <Sparkles size={15} className="text-aqua" />
-            Building with modern tools and AI-assisted workflows
-          </motion.div>
-        </motion.div>
-
-        {/* right */}
+        {/* Technical Architecture Capabilities Bar */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="pb-10 lg:pb-0"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-16 rounded-2xl border border-indigo-500/20 bg-[#0c1224]/60 p-5 backdrop-blur-sm sm:p-6"
         >
-          <ProfileCard />
-        </motion.div>
-      </div>
-
-      {/* ===== tech marquee ===== */}
-      <div className="relative mt-20 w-full">
-        <p className="mb-5 text-center text-xs font-medium uppercase tracking-[0.3em] text-zinc-500">Tools I build with</p>
-        <div
-          className="overflow-hidden"
-          style={{
-            maskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
-            WebkitMaskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
-          }}
-        >
-          <div className="flex w-max animate-marquee gap-4">
-            {[...TECH, ...TECH].map(({ icon: Icon, name, color }, i) => (
-              <div key={i} className="glass flex items-center gap-3 rounded-full px-5 py-3 text-sm font-medium text-zinc-300">
-                <Icon size={20} style={{ color }} />
-                {name}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {CORE_CAPABILITIES.map(({ label, desc, color, border }, i) => (
+              <div key={label} className={`border-l-2 ${border} pl-4`}>
+                <span className={`font-mono text-[10px] ${color} uppercase tracking-widest font-semibold`}>
+                  0{i + 1} // Domain
+                </span>
+                <p className="mt-1 font-display text-sm font-semibold text-white">{label}</p>
+                <p className="mt-0.5 text-xs text-zinc-400">{desc}</p>
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
-
-      {/* scroll cue */}
-      <motion.a
-        href="#about"
-        aria-label="Scroll down"
-        className="absolute bottom-4 left-1/2 hidden -translate-x-1/2 text-zinc-500 md:block"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <ChevronDown />
-      </motion.a>
     </section>
   );
 }

@@ -1,6 +1,14 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { Smartphone } from "lucide-react";
+import {
+  Code2,
+  Database,
+  Globe,
+  Layers,
+  Server,
+  Smartphone,
+  Terminal,
+  Wrench,
+} from "lucide-react";
 import {
   SiReact,
   SiNextdotjs,
@@ -25,165 +33,206 @@ import {
 } from "react-icons/si";
 import { FaAws, FaHtml5, FaCss3Alt } from "react-icons/fa6";
 
-/* ---------- levels ---------- */
-const LEVELS = {
-  3: { label: "Strong", text: "text-emerald-400", bar: "bg-emerald-400" },
-  2: { label: "Working", text: "text-aqua", bar: "bg-aqua" },
-  1: { label: "Familiar", text: "text-amber-400", bar: "bg-amber-400" },
-};
-
-/* ---------- data (edit levels here) ---------- */
-const SKILLS = [
-  // frontend
-  { name: "React.js", icon: SiReact, color: "#61dafb", cat: "Frontend", level: 3 },
-  { name: "JavaScript (ES6+)", icon: SiJavascript, color: "#f7df1e", cat: "Frontend", level: 3 },
-  { name: "TypeScript", icon: SiTypescript, color: "#3178c6", cat: "Frontend", level: 2 },
-  { name: "Next.js", icon: SiNextdotjs, color: "#ffffff", cat: "Frontend", level: 3 },
-  { name: "Tailwind CSS", icon: SiTailwindcss, color: "#38bdf8", cat: "Frontend", level: 3 },
-  { name: "HTML5", icon: FaHtml5, color: "#e34f26", cat: "Frontend", level: 3 },
-  { name: "CSS3", icon: FaCss3Alt, color: "#1572b6", cat: "Frontend", level: 3 },
-  { name: "Redux", icon: SiRedux, color: "#764abc", cat: "Frontend", level: 1 },
-  { name: "Vite", icon: SiVite, color: "#a78bfa", cat: "Frontend", level: 3 },
-  { name: "React Native", icon: Smartphone, color: "#ec4899", cat: "Mobile", level: 3 },
-
-  // backend
-  { name: "Node.js", icon: SiNodedotjs, color: "#5fa04e", cat: "Backend", level: 3 },
-  { name: "Express.js", icon: SiExpress, color: "#e5e7eb", cat: "Backend", level: 3 },
-  { name: "REST APIs", icon: SiPostman, color: "#ff6c37", cat: "Backend", level: 3 },
-  { name: "JWT / Auth", icon: SiJsonwebtokens, color: "#d63aff", cat: "Backend", level: 1 },
-  { name: "Socket.io", icon: SiSocketdotio, color: "#e5e7eb", cat: "Backend", level: 2 },
-
-  // database
-  { name: "MongoDB", icon: SiMongodb, color: "#47a248", cat: "Database", level: 3 },
-  { name: "PostgreSQL", icon: SiPostgresql, color: "#4f8bc9", cat: "Database", level: 2 },
-  { name: "Redis", icon: SiRedis, color: "#ef4444", cat: "Database", level: 1 },
-
-  // devops
-  { name: "Docker", icon: SiDocker, color: "#2496ed", cat: "DevOps", level: 2 },
-  { name: "AWS", icon: FaAws, color: "#ff9900", cat: "DevOps", level: 1 },
-  { name: "Git", icon: SiGit, color: "#f05133", cat: "DevOps", level: 3 },
-  { name: "GitHub", icon: SiGithub, color: "#ffffff", cat: "DevOps", level: 3 },
-
-  // design & tools
-  { name: "Figma", icon: SiFigma, color: "#f24e1e", cat: "Design", level: 2 },
-  { name: "Shopify", icon: SiShopify, color: "#95bf47", cat: "Design", level: 2 },
+const SKILL_TAXONOMY = [
+  {
+    category: "Frontend & Interface Engineering",
+    icon: Code2,
+    badge: "LAYER 01",
+    description: "Component systems, reactive interfaces, and responsive web foundations.",
+    color: "text-indigo-400",
+    badgeBg: "border-indigo-500/30 bg-indigo-500/10 text-indigo-300",
+    items: [
+      { name: "React.js", icon: SiReact, role: "Primary UI Library", brandColor: "group-hover:text-[#61dafb]" },
+      { name: "Next.js", icon: SiNextdotjs, role: "SSR & Web Framework", brandColor: "group-hover:text-white" },
+      { name: "TypeScript", icon: SiTypescript, role: "Type-Safe Architecture", brandColor: "group-hover:text-[#3178c6]" },
+      { name: "JavaScript (ES6+)", icon: SiJavascript, role: "Core Language", brandColor: "group-hover:text-[#f7df1e]" },
+      { name: "Tailwind CSS", icon: SiTailwindcss, role: "Utility Styling", brandColor: "group-hover:text-[#38bdf8]" },
+      { name: "HTML5 / CSS3", icon: FaHtml5, role: "Semantic Markup", brandColor: "group-hover:text-[#e34f26]" },
+      { name: "Vite", icon: SiVite, role: "Build Tooling", brandColor: "group-hover:text-[#a78bfa]" },
+      { name: "Redux", icon: SiRedux, role: "Global State Management", brandColor: "group-hover:text-[#764abc]" },
+    ],
+  },
+  {
+    category: "Mobile Architecture",
+    icon: Smartphone,
+    badge: "LAYER 02",
+    description: "Cross-platform mobile applications engineered for native performance.",
+    color: "text-sky-400",
+    badgeBg: "border-sky-500/30 bg-sky-500/10 text-sky-300",
+    items: [
+      { name: "React Native", icon: Smartphone, role: "iOS & Android Builds", brandColor: "group-hover:text-[#38bdf8]" },
+      { name: "Mobile UI Patterns", icon: Layers, role: "Touch Gestures & Views", brandColor: "group-hover:text-sky-300" },
+    ],
+  },
+  {
+    category: "Backend & Distributed Services",
+    icon: Server,
+    badge: "LAYER 03",
+    description: "Server runtimes, RESTful communication, and secure authentication.",
+    color: "text-emerald-400",
+    badgeBg: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
+    items: [
+      { name: "Node.js", icon: SiNodedotjs, role: "Server Runtime", brandColor: "group-hover:text-[#5fa04e]" },
+      { name: "Express.js", icon: SiExpress, role: "REST Framework", brandColor: "group-hover:text-zinc-200" },
+      { name: "REST APIs", icon: Globe, role: "API Architecture", brandColor: "group-hover:text-emerald-300" },
+      { name: "JWT / Auth", icon: SiJsonwebtokens, role: "Token Authorization", brandColor: "group-hover:text-[#d63aff]" },
+      { name: "Socket.io", icon: SiSocketdotio, role: "Real-Time Events", brandColor: "group-hover:text-zinc-200" },
+    ],
+  },
+  {
+    category: "Data Systems & Caching",
+    icon: Database,
+    badge: "LAYER 04",
+    description: "Data modeling, relational indexing, and low-latency in-memory cache.",
+    color: "text-amber-400",
+    badgeBg: "border-amber-500/30 bg-amber-500/10 text-amber-300",
+    items: [
+      { name: "MongoDB", icon: SiMongodb, role: "Document Database", brandColor: "group-hover:text-[#47a248]" },
+      { name: "PostgreSQL", icon: SiPostgresql, role: "Relational Storage", brandColor: "group-hover:text-[#4f8bc9]" },
+      { name: "Redis", icon: SiRedis, role: "In-Memory Caching & Rate Limits", brandColor: "group-hover:text-[#ef4444]" },
+    ],
+  },
+  {
+    category: "Cloud, Infrastructure & Design",
+    icon: Wrench,
+    badge: "LAYER 05",
+    description: "Deployment pipelines, version control, and design system fidelity.",
+    color: "text-purple-400",
+    badgeBg: "border-purple-500/30 bg-purple-500/10 text-purple-300",
+    items: [
+      { name: "Docker", icon: SiDocker, role: "Containerization", brandColor: "group-hover:text-[#2496ed]" },
+      { name: "AWS", icon: FaAws, role: "Cloud Services", brandColor: "group-hover:text-[#ff9900]" },
+      { name: "Git & GitHub", icon: SiGit, role: "Version Control", brandColor: "group-hover:text-[#f05133]" },
+      { name: "Postman", icon: SiPostman, role: "API Testing & Docs", brandColor: "group-hover:text-[#ff6c37]" },
+      { name: "Figma", icon: SiFigma, role: "UI/UX Translation", brandColor: "group-hover:text-[#f24e1e]" },
+      { name: "Shopify", icon: SiShopify, role: "E-Commerce Integrations", brandColor: "group-hover:text-[#95bf47]" },
+    ],
+  },
 ];
 
-const TABS = ["All", "Frontend", "Mobile", "Backend", "Database", "DevOps", "Design"];
+const CATEGORY_TABS = [
+  "All Layers",
+  "Frontend & Mobile",
+  "Backend & APIs",
+  "Data Systems",
+  "Cloud & Tools",
+];
 
-/* ---------- card ---------- */
-function SkillCard({ skill }) {
-  const { name, icon: Icon, color, level } = skill;
-  const lv = LEVELS[level];
-
-  const onMove = (e) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty("--cx", `${e.clientX - r.left}px`);
-    e.currentTarget.style.setProperty("--cy", `${e.clientY - r.top}px`);
-  };
-
-  return (
-    <motion.div
-      layout
-      onMouseMove={onMove}
-      initial={{ opacity: 0, scale: 0.85 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.85 }}
-      transition={{ type: "spring", stiffness: 300, damping: 28 }}
-      whileHover={{ y: -6 }}
-      className="group glass relative overflow-hidden rounded-2xl p-5 transition-colors hover:border-white/25"
-    >
-      {/* cursor glow */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{
-          background: `radial-gradient(180px circle at var(--cx) var(--cy), ${color}22, transparent 70%)`,
-        }}
-      />
-
-      <div className="relative flex items-center gap-4">
-        <div
-          className="grid h-12 w-12 shrink-0 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6"
-          style={{ background: `${color}1f`, boxShadow: `0 0 24px -6px ${color}66` }}
-        >
-          <Icon size={24} style={{ color }} />
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold leading-tight">{name}</p>
-          <p className={`mt-0.5 text-xs font-medium ${lv.text}`}>{lv.label}</p>
-        </div>
-      </div>
-
-      {/* level meter */}
-      <div className="relative mt-4 flex gap-1.5">
-        {[1, 2, 3].map((n) => (
-          <span key={n} className={`h-1.5 flex-1 rounded-full ${n <= level ? lv.bar : "bg-white/10"}`} />
-        ))}
-      </div>
-    </motion.div>
-  );
-}
-
-/* ---------- Skills ---------- */
 export default function Skills() {
-  const [tab, setTab] = useState("All");
-  const list = tab === "All" ? SKILLS : SKILLS.filter((s) => s.cat === tab);
+  const [activeTab, setActiveTab] = useState("All Layers");
+
+  const filteredCategories = SKILL_TAXONOMY.filter((cat) => {
+    if (activeTab === "All Layers") return true;
+    if (activeTab === "Frontend & Mobile")
+      return cat.category.includes("Frontend") || cat.category.includes("Mobile");
+    if (activeTab === "Backend & APIs") return cat.category.includes("Backend");
+    if (activeTab === "Data Systems") return cat.category.includes("Data");
+    if (activeTab === "Cloud & Tools") return cat.category.includes("Cloud");
+    return true;
+  });
 
   return (
-    <section id="skills" className="relative py-28">
-      <div className="pointer-events-none absolute right-0 top-1/4 -z-10 h-80 w-80 rounded-full bg-hot/15 blur-[120px]" />
-
+    <section id="skills" className="relative py-24 sm:py-32">
       <div className="mx-auto max-w-6xl px-6 lg:px-10">
-        {/* heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="mb-10 max-w-2xl"
-        >
-          <p className="mb-3 font-mono text-sm uppercase tracking-[0.25em] text-brand">// skills</p>
-          <h2 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
-            The <span className="text-gradient">tools</span> in my belt
-          </h2>
-          <p className="mt-4 text-zinc-400">
-            Honest levels, no inflated bars. Strong is what I use daily, Working is what I use on real projects, and Familiar is what I'm still
-            growing into.
+        {/* Section Header */}
+        <div className="flex flex-col items-start justify-between gap-4 border-b border-indigo-500/15 pb-6 sm:flex-row sm:items-end">
+          <div>
+            <span className="font-mono text-xs uppercase tracking-[0.25em] text-indigo-400 font-semibold">
+              03 // Systems Taxonomy
+            </span>
+            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+              Technical capabilities & engineering stack.
+            </h2>
+          </div>
+          <p className="max-w-xs font-mono text-xs text-indigo-300/70">
+            STRUCTURED ARCHITECTURE · PRODUCTION-READY STACK
           </p>
-        </motion.div>
+        </div>
 
-        {/* tabs */}
-        <div className="mb-10 flex flex-wrap gap-2">
-          {TABS.map((t) => (
+        {/* Tab Controls */}
+        <div className="mt-8 flex flex-wrap gap-2">
+          {CATEGORY_TABS.map((tab) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`relative rounded-full px-5 py-2 text-sm font-medium transition-colors ${
-                tab === t ? "text-white" : "text-zinc-400 hover:text-white"
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`rounded-lg px-4 py-2 font-mono text-xs transition-all cursor-pointer ${
+                activeTab === tab
+                  ? "border border-indigo-500/50 bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-600/25"
+                  : "border border-indigo-500/20 bg-indigo-950/20 text-zinc-300 hover:border-indigo-400/40 hover:text-white"
               }`}
             >
-              {tab === t && (
-                <motion.span
-                  layoutId="skill-tab"
-                  className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-brand to-hot"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                />
-              )}
-              {tab !== t && <span className="absolute inset-0 -z-10 rounded-full border border-white/10 bg-white/[0.03]" />}
-              {t}
+              {tab}
             </button>
           ))}
         </div>
 
-        {/* grid */}
-        <motion.div layout className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <AnimatePresence mode="popLayout">
-            {list.map((s) => (
-              <SkillCard key={s.name} skill={s} />
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        {/* Systems Taxonomy Stack */}
+        <div className="mt-12 space-y-10">
+          {filteredCategories.map((layer) => {
+            const Icon = layer.icon;
+            return (
+              <div
+                key={layer.category}
+                className="rounded-2xl border border-indigo-500/20 bg-[#0d1324]/60 p-6 shadow-xl backdrop-blur-sm sm:p-8"
+              >
+                {/* Layer Heading */}
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-indigo-500/15 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="grid h-8 w-8 place-items-center rounded-lg border border-indigo-500/30 bg-indigo-500/10 text-indigo-400">
+                      <Icon size={16} />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-lg font-bold text-white">
+                        {layer.category}
+                      </h3>
+                      <p className="text-xs text-zinc-400">{layer.description}</p>
+                    </div>
+                  </div>
+                  <span className={`font-mono text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${layer.badgeBg}`}>
+                    {layer.badge}
+                  </span>
+                </div>
+
+                {/* Items Grid with Brand Accents */}
+                <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                  {layer.items.map((item) => {
+                    const ItemIcon = item.icon;
+                    return (
+                      <div
+                        key={item.name}
+                        className="group flex flex-col justify-between rounded-xl border border-indigo-500/15 bg-[#090e1c]/80 p-3.5 transition-all hover:border-indigo-400/50 hover:bg-[#11182c] shadow-sm"
+                      >
+                        <div className="flex items-center justify-between">
+                          <ItemIcon
+                            size={20}
+                            className={`text-zinc-400 transition-colors duration-200 ${item.brandColor}`}
+                          />
+                        </div>
+                        <div className="mt-3">
+                          <p className="font-display text-xs font-semibold text-white group-hover:text-indigo-200 transition-colors">
+                            {item.name}
+                          </p>
+                          <p className="mt-0.5 font-mono text-[10px] text-zinc-400 truncate">
+                            {item.role}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Engineering Philosophy Notice with Amber and Indigo Highlights */}
+        <div className="mt-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl border border-indigo-500/20 bg-indigo-950/20 p-5 font-mono text-xs text-zinc-300">
+          <div className="flex items-center gap-2.5">
+            <Terminal size={14} className="text-amber-400 shrink-0" />
+            <span>Stack philosophy: Tools are chosen for type-safety, maintainability, and delivery speed.</span>
+          </div>
+          <span className="text-indigo-400 font-semibold">STABILITY & PERFORMANCE FIRST</span>
+        </div>
       </div>
     </section>
   );

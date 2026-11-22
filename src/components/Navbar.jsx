@@ -1,38 +1,44 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "motion/react";
-import { ArrowUpRight, Briefcase, Download, FolderGit2, Home, Layers, Menu, Send, User, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 
-/* ---------- config ---------- */
 const GITHUB = "https://github.com/shiibiilll";
-const LINKEDIN = "linkedin.com/in/shibil-k";
-const RESUME = "/resume.pdf";
+const LINKEDIN = "https://www.linkedin.com/in/shibil-k";
 
 const LINKS = [
-  { id: "hero", label: "Home", icon: Home },
-  { id: "about", label: "About", icon: User },
-  { id: "skills", label: "Skills", icon: Layers },
-  { id: "projects", label: "Projects", icon: FolderGit2 },
-  { id: "experience", label: "Experience", icon: Briefcase },
-  { id: "contact", label: "Contact", icon: Send },
+  { id: "hero", label: "Overview", num: "00" },
+  { id: "about", label: "Profile", num: "01" },
+  { id: "skills", label: "Architecture", num: "02" },
+  { id: "projects", label: "Case Studies", num: "03" },
+  { id: "experience", label: "Ledger", num: "04" },
+  { id: "contact", label: "Contact", num: "05" },
 ];
 
-/* ---------- scroll-spy hook ---------- */
 function useActiveSection(ids) {
   const [active, setActive] = useState(ids[0]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => e.isIntersecting && setActive(e.target.id));
-      },
-      { rootMargin: "-40% 0px -55% 0px" },
-    );
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el); // skips sections that aren't built yet
-    });
-    return () => observer.disconnect();
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
+    try {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              setActive(e.target.id);
+            }
+          });
+        },
+        { rootMargin: "-25% 0px -45% 0px" },
+      );
+      ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) observer.observe(el);
+      });
+      return () => observer.disconnect();
+    } catch {
+      // Graceful fallback for older mobile webviews
+    }
   }, [ids]);
 
   return active;
@@ -40,190 +46,201 @@ function useActiveSection(ids) {
 
 const IDS = LINKS.map((l) => l.id);
 
-/* ---------- Navbar ---------- */
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const active = useActiveSection(IDS);
 
   const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 25 });
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 28 });
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // lock body scroll while the mobile menu is open
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => (document.body.style.overflow = "");
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [open]);
+
+  const handleMobileNavClick = (e, id) => {
+    e.preventDefault();
+    setOpen(false);
+    document.body.style.overflow = "";
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 60);
+  };
 
   return (
     <>
-      {/* scroll progress bar */}
+      {/* Precision scroll reading indicator with dual-tone energy */}
       <motion.div
-        style={{ scaleX: progress }}
-        className="fixed inset-x-0 top-0 z-[60] h-[3px] origin-left bg-gradient-to-r from-brand via-hot to-aqua"
+        style={{ scaleX }}
+        className="fixed inset-x-0 top-0 z-[70] h-[2px] origin-left bg-gradient-to-r from-indigo-500 via-sky-400 to-amber-400"
       />
 
-      <motion.header
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed inset-x-0 top-4 z-50 flex justify-center px-4"
-      >
+      <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4 sm:px-6">
         <nav
-          className={`flex w-full max-w-5xl items-center justify-between rounded-full border py-2 pl-5 pr-2 backdrop-blur-xl transition-all duration-300 ${
-            scrolled ? "border-white/10 bg-ink/70 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)]" : "border-transparent bg-transparent"
+          className={`flex w-full max-w-6xl items-center justify-between rounded-2xl border px-4 py-2.5 transition-all duration-300 sm:px-6 ${
+            scrolled
+              ? "border-indigo-500/20 bg-[#090d18]/90 shadow-[0_16px_36px_rgba(3,7,18,0.7)] backdrop-blur-md"
+              : "border-white/[0.08] bg-[#090d18]/50 backdrop-blur-sm"
           }`}
         >
-          {/* logo */}
-          <a href="#hero" className="group flex items-center gap-2 text-xl font-extrabold tracking-tight">
-            {/* <span className="relative grid h-8 w-8 place-items-center rounded-xl overflow-hidden transition-transform group-hover:rotate-12">
-              <img src="/image/favicon.webp" alt="Logo" className="h-full w-full object-contain" />
-            </span> */}
-            <span>
-              shibil<span className="text-gradient">.dev</span>
-            </span>
+          {/* Logo / Brandmark */}
+          <a href="#hero" className="group flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-indigo-500/40 bg-indigo-500/10 font-mono text-xs font-bold text-indigo-400 shadow-[0_0_12px_rgba(99,102,241,0.2)] transition group-hover:border-indigo-400 group-hover:bg-indigo-500/20 group-hover:text-white">
+              S
+            </div>
+            <div className="flex flex-col">
+              <span className="font-mono text-sm font-semibold tracking-wider text-white">
+                SHIBIL<span className="text-amber-400">.</span>
+              </span>
+              <span className="hidden font-mono text-[10px] text-indigo-300/70 sm:inline-block">
+                FULL STACK ENGINEER
+              </span>
+            </div>
           </a>
 
-          {/* desktop links */}
-          <ul className="hidden items-center gap-1 lg:flex">
-            {LINKS.map(({ id, label }) => {
+          {/* Desktop Navigation Links */}
+          <ul className="hidden items-center gap-1 md:flex">
+            {LINKS.map(({ id, label, num }) => {
               const isActive = active === id;
               return (
                 <li key={id}>
                   <a
                     href={`#${id}`}
-                    className={`relative block rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                      isActive ? "text-white" : "text-zinc-400 hover:text-white"
+                    className={`relative flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium tracking-wide transition-colors ${
+                      isActive ? "text-white" : "text-zinc-400 hover:text-indigo-200"
                     }`}
                   >
+                    <span className={`font-mono text-[10px] ${isActive ? "text-indigo-400" : "text-zinc-600"}`}>
+                      {num}
+                    </span>
+                    <span>{label}</span>
                     {isActive && (
                       <motion.span
                         layoutId="nav-pill"
-                        className="absolute inset-0 -z-10 rounded-full border border-white/10 bg-white/[0.08]"
+                        className="absolute inset-0 -z-10 rounded-lg border border-indigo-500/30 bg-indigo-500/15"
                         transition={{ type: "spring", stiffness: 380, damping: 32 }}
                       />
                     )}
-                    {label}
                   </a>
                 </li>
               );
             })}
           </ul>
 
-          {/* right side */}
-          <div className="flex items-center gap-2">
-            <div className="hidden items-center gap-1 md:flex">
+          {/* Actions */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="hidden items-center gap-1.5 sm:flex">
               <a
                 href={GITHUB}
                 target="_blank"
                 rel="noreferrer"
-                aria-label="GitHub"
-                className="grid h-10 w-10 place-items-center rounded-full text-zinc-400 transition hover:bg-white/10 hover:text-white"
+                aria-label="GitHub Profile"
+                className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-zinc-400 transition hover:border-indigo-400/40 hover:bg-indigo-500/10 hover:text-indigo-300"
               >
-                <FaGithub size={18} />
+                <FaGithub size={14} />
               </a>
               <a
                 href={LINKEDIN}
                 target="_blank"
                 rel="noreferrer"
-                aria-label="LinkedIn"
-                className="grid h-10 w-10 place-items-center rounded-full text-zinc-400 transition hover:bg-white/10 hover:text-white"
+                aria-label="LinkedIn Profile"
+                className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-zinc-400 transition hover:border-indigo-400/40 hover:bg-indigo-500/10 hover:text-indigo-300"
               >
-                <FaLinkedinIn size={18} />
+                <FaLinkedinIn size={13} />
               </a>
             </div>
 
-            {/* <a
-              href={RESUME}
-              download
-              className="hidden items-center gap-2 rounded-full bg-gradient-to-r from-brand to-hot px-5 py-2.5 text-sm font-semibold text-white shadow-[0_6px_24px_-6px_rgba(99,102,241,0.8)] transition hover:scale-[1.04] sm:inline-flex"
+            <a
+              href="#contact"
+              className="group hidden items-center gap-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3.5 py-1.5 font-mono text-xs font-medium text-amber-300 transition hover:border-amber-400 hover:bg-amber-500/20 sm:inline-flex"
             >
-              <Download size={15} /> Resume
-            </a> */}
+              <span>Contact</span>
+              <ArrowUpRight size={13} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
 
-            {/* hamburger */}
+            {/* Mobile Menu Button with 44px touch target */}
             <button
-              onClick={() => setOpen((o) => !o)}
-              aria-label="Toggle menu"
-              aria-expanded={open}
-              className="glass grid h-10 w-10 place-items-center rounded-full lg:hidden"
+              onClick={() => setOpen(!open)}
+              aria-label="Toggle navigation menu"
+              className="grid h-11 w-11 place-items-center rounded-xl border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 md:hidden cursor-pointer"
             >
-              {open ? <X size={18} /> : <Menu size={18} />}
+              {open ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </nav>
-      </motion.header>
+      </header>
 
-      {/* ===== mobile menu ===== */}
+      {/* Full-screen Mobile Menu */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 flex flex-col justify-center bg-ink/95 px-8 backdrop-blur-2xl lg:hidden"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-40 flex flex-col justify-between bg-[#090d18]/98 px-6 pt-24 pb-8 backdrop-blur-md md:hidden"
           >
-            {/* soft glow */}
-            <div className="pointer-events-none absolute -right-20 top-1/4 h-72 w-72 rounded-full bg-brand/30 blur-[100px]" />
-            <div className="pointer-events-none absolute -left-20 bottom-1/4 h-72 w-72 rounded-full bg-hot/20 blur-[100px]" />
-
-            <ul className="relative space-y-2">
-              {LINKS.map(({ id, label, icon: Icon }, i) => (
-                <motion.li
-                  key={id}
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -30 }}
-                  transition={{ delay: 0.06 * i + 0.1, duration: 0.4 }}
-                >
+            <div className="flex flex-col gap-2">
+              <p className="font-mono text-xs uppercase tracking-widest text-indigo-400">Navigation Index</p>
+              <div className="mt-4 flex flex-col gap-3">
+                {LINKS.map(({ id, label, num }) => (
                   <a
+                    key={id}
                     href={`#${id}`}
-                    onClick={() => setOpen(false)}
-                    className={`flex items-center gap-4 rounded-2xl px-4 py-3.5 text-3xl font-bold transition ${
-                      active === id ? "text-gradient" : "text-zinc-300 hover:text-white"
-                    }`}
+                    onClick={(e) => handleMobileNavClick(e, id)}
+                    className="flex items-baseline justify-between border-b border-indigo-500/10 py-3 text-2xl font-light text-zinc-200 transition hover:text-amber-400"
                   >
-                    <Icon size={24} className={active === id ? "text-brand" : "text-zinc-600"} />
-                    {label}
+                    <span>{label}</span>
+                    <span className="font-mono text-xs text-indigo-400/80">/{num}</span>
                   </a>
-                </motion.li>
-              ))}
-            </ul>
+                ))}
+              </div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.55 }}
-              className="relative mt-10 flex items-center gap-3"
-            >
-              {/* <a
-                href={RESUME}
-                download
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-brand to-hot px-6 py-3 font-semibold text-white"
-              >
-                Resume <ArrowUpRight size={16} />
-              </a> */}
-              <a href={GITHUB} target="_blank" rel="noreferrer" aria-label="GitHub" className="glass grid h-12 w-12 place-items-center rounded-full">
-                <FaGithub size={18} />
-              </a>
-              <a
-                href={LINKEDIN}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="LinkedIn"
-                className="glass grid h-12 w-12 place-items-center rounded-full"
-              >
-                <FaLinkedinIn size={18} />
-              </a>
-            </motion.div>
+            <div className="border-t border-indigo-500/20 pt-6">
+              <div className="flex items-center justify-between text-xs text-zinc-400">
+                <span className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-zinc-300">Kerala, IN (GMT+5:30)</span>
+                </span>
+                <span className="font-mono text-indigo-400">SHIBIL // 2026</span>
+              </div>
+              <div className="mt-4 flex gap-3">
+                <a
+                  href={GITHUB}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-indigo-500/20 bg-indigo-500/10 py-2.5 text-xs font-medium text-white transition hover:bg-indigo-500/20"
+                >
+                  <FaGithub size={14} className="text-indigo-400" /> GitHub
+                </a>
+                <a
+                  href={LINKEDIN}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-indigo-500/20 bg-indigo-500/10 py-2.5 text-xs font-medium text-white transition hover:bg-indigo-500/20"
+                >
+                  <FaLinkedinIn size={14} className="text-indigo-400" /> LinkedIn
+                </a>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
